@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatehouse — Membership Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFEAE0;
+    --bg-panel:#FFFFFF;
+    --bg-sunken:#E6E0D2;
+    --ink:#20241F;
+    --ink-soft:#5B6058;
+    --ink-faint:#8B9086;
+    --accent:#2F5233;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#DCE6D9;
+    --amber:#95611C;
+    --amber-soft:#F3E4C9;
+    --red:#93362C;
+    --red-soft:#F3DAD6;
+    --line:#D8D2C3;
+    --serif:'Fraunces', Georgia, serif;
+    --sans:'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --radius: 3px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#181B16;
+      --bg-panel:#20241D;
+      --bg-sunken:#14170F;
+      --ink:#EAE7DC;
+      --ink-soft:#A6AB9C;
+      --ink-faint:#767C6D;
+      --accent:#7EB08A;
+      --accent-ink:#12180F;
+      --accent-soft:#263422;
+      --amber:#E3AB63;
+      --amber-soft:#332711;
+      --red:#E28E80;
+      --red-soft:#361F19;
+      --line:#333827;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#181B16;
+    --bg-panel:#20241D;
+    --bg-sunken:#14170F;
+    --ink:#EAE7DC;
+    --ink-soft:#A6AB9C;
+    --ink-faint:#767C6D;
+    --accent:#7EB08A;
+    --accent-ink:#12180F;
+    --accent-soft:#263422;
+    --amber:#E3AB63;
+    --amber-soft:#332711;
+    --red:#E28E80;
+    --red-soft:#361F19;
+    --line:#333827;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  ::selection{background:var(--accent-soft);}
+
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:28px 20px 80px;
+  }
+
+  /* Header */
+  .top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:28px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand svg{flex:none;}
+  .brand-name{
+    font-family:var(--serif);
+    font-size:23px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .brand-tag{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin-top:1px;
+  }
+  nav.tabs{
+    display:flex;
+    gap:4px;
+    background:var(--bg-sunken);
+    padding:4px;
+    border-radius:6px;
+  }
+  nav.tabs button{
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-family:var(--sans);
+    font-size:13.5px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  nav.tabs button.active{
+    background:var(--bg-panel);
+    color:var(--ink);
+    box-shadow:0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  h1,h2,h3{font-family:var(--serif); font-weight:600; margin:0;}
+  h2{font-size:20px; letter-spacing:-0.01em;}
+  h3{font-size:15px;}
+
+  p{margin:0;}
+
+  .panel{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+  }
+  .panel + .panel{margin-top:18px;}
+
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{
+    display:block;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+    font-weight:600;
+  }
+  .field .hint{
+    font-size:11.5px;
+    color:var(--ink-faint);
+    margin-top:4px;
+  }
+  input[type=text], input[type=password], input[type=tel]{
+    width:100%;
+    background:var(--bg-sunken);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:4px;
+    font-family:var(--sans);
+    font-size:14px;
+  }
+  input:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  input.mono{font-family:var(--mono); letter-spacing:0.03em;}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:13px;
+    padding:9px 15px;
+    border-radius:4px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--ink-faint);}
+  .btn-primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--accent-ink);
+  }
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-ghost{
+    background:transparent;
+    border-color:transparent;
+    padding:8px 10px;
+  }
+  .btn-danger{color:var(--red);}
+  .btn-danger:hover{border-color:var(--red);}
+  .btn-sm{padding:6px 10px; font-size:12px;}
+  .btn:disabled{opacity:0.45; cursor:not-allowed;}
+
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row > *{flex:1; min-width:160px;}
+
+  .form-inline{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;}
+  .form-inline .field{flex:1; min-width:150px; margin-bottom:0;}
+
+  .top-bar-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:11.5px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .badge-approved{background:var(--accent-soft); color:var(--accent);}
+  .badge-pending{background:var(--amber-soft); color:var(--amber);}
+  .badge-dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--ink-faint);
+    padding:0 10px 8px;
+    border-bottom:1px solid var(--line);
+  }
+  tbody td{
+    padding:12px 10px;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  .member-name{font-weight:600;}
+  .member-number, .member-code{font-family:var(--mono); font-size:12.5px; color:var(--ink-soft);}
+  .actions-cell{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;}
+
+  .empty{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-faint);
+    font-size:13.5px;
+  }
+
+  .stat-row{display:flex; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+  .stat{
+    background:var(--bg-sunken);
+    border-radius:4px;
+    padding:12px 16px;
+    min-width:110px;
+  }
+  .stat .num{font-family:var(--serif); font-size:22px; font-weight:600;}
+  .stat .lbl{font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+
+  .login-wrap{
+    max-width:360px;
+    margin:60px auto;
+  }
+  .login-wrap h2{margin-bottom:4px;}
+  .login-wrap p.sub{color:var(--ink-soft); font-size:13.5px; margin-bottom:20px;}
+  .error-text{color:var(--red); font-size:12.5px; margin-top:8px;}
+  .success-text{color:var(--accent); font-size:12.5px; margin-top:8px;}
+
+  .verify-wrap{max-width:440px; margin:40px auto;}
+  .verify-result{
+    margin-top:18px;
+    padding:18px;
+    border-radius:4px;
+    border:1px solid var(--line);
+  }
+  .verify-result.ok{background:var(--accent-soft); border-color:var(--accent);}
+  .verify-result.pending{background:var(--amber-soft); border-color:var(--amber);}
+  .verify-result.bad{background:var(--red-soft); border-color:var(--red);}
+  .verify-result h3{margin-bottom:6px;}
+  .verify-result p{font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
+
+  .wa-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    background:#25D366;
+    color:#0B2712;
+    font-weight:700;
+    font-size:13.5px;
+    padding:11px 18px;
+    border-radius:4px;
+    text-decoration:none;
+  }
+
+  .copy-feedback{font-size:11px; color:var(--accent); margin-left:6px;}
+
+  .logout-row{display:flex; justify-content:flex-end; margin-bottom:14px;}
+
+  footer{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:11.5px;
+    margin-top:50px;
+  }
+
+  @media (max-width:640px){
+    .top{flex-direction:column; align-items:flex-start;}
+    thead{display:none;}
+    tbody tr{
+      display:block;
+      border-bottom:8px solid var(--bg);
+      padding:10px 0;
+    }
+    tbody td{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid var(--line);
+      padding:8px 4px;
+    }
+    tbody td::before{
+      content:attr(data-label);
+      font-size:11px;
+      font-weight:700;
+      color:var(--ink-faint);
+    }
+    .actions-cell{justify-content:flex-start; width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+        <rect x="2" y="10" width="26" height="18" rx="1.5" stroke="currentColor" stroke-width="1.6" style="color:var(--ink)"/>
+        <path d="M8 10V7a7 7 0 0 1 14 0v3" stroke="currentColor" stroke-width="1.6" style="color:var(--ink)"/>
+        <circle cx="15" cy="18.5" r="2" fill="currentColor" style="color:var(--accent)"/>
+        <line x1="15" y1="20" x2="15" y2="23" stroke="currentColor" stroke-width="1.6" style="color:var(--accent)"/>
+      </svg>
+      <div>
+        <div class="brand-name">Gatehouse</div>
+        <div class="brand-tag">Membership access, kept simple</div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button id="tabAdminBtn" class="active">Admin</button>
+      <button id="tabVerifyBtn">Verify membership</button>
+    </nav>
+  </div>
+
+  <!-- ADMIN: LOGIN -->
+  <div id="loginView" class="login-wrap">
+    <h2>Admin sign in</h2>
+    <p class="sub">Enter the admin password to open the dashboard.</p>
+    <div class="panel">
+      <div class="field">
+        <label for="pwInput">Password</label>
+        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="off">
+        <div class="hint">Testing build — default password is <strong>admin123</strong>. Change it in Settings once inside.</div>
+      </div>
+      <button class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center; margin-top:6px;">Sign in</button>
+      <div id="loginError" class="error-text" style="display:none;">Incorrect password. Try again.</div>
+    </div>
+  </div>
+
+  <!-- ADMIN: DASHBOARD -->
+  <div id="dashboardView" style="display:none;">
+    <div class="logout-row">
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">Sign out</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Members</div></div>
+      <div class="stat"><div class="num" id="statApproved">0</div><div class="lbl">Approved</div></div>
+      <div class="stat"><div class="num" id="statPending">0</div><div class="lbl">Pending</div></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-bottom:14px;">WhatsApp group link</h3>
+      <div class="form-inline">
+        <div class="field">
+          <label for="waLinkInput">Group invite link</label>
+          <input type="text" id="waLinkInput" placeholder="https://chat.whatsapp.com/…">
+        </div>
+        <button class="btn btn-primary" id="saveWaLinkBtn">Save link</button>
+      </div>
+      <div id="waLinkSaved" class="success-text" style="display:none;">Link saved.</div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-bottom:14px;">Change admin password</h3>
+      <div class="form-inline">
+        <div class="field">
+          <label for="newPwInput">New password</label>
+          <input type="password" id="newPwInput" placeholder="At least 4 characters">
+        </div>
+        <button class="btn" id="savePwBtn">Update password</button>
+      </div>
+      <div id="pwSaved" class="success-text" style="display:none;">Password updated.</div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-bottom:14px;">Add a member</h3>
+      <div class="row">
+        <div class="field">
+          <label for="nameInput">Full name</label>
+          <input type="text" id="nameInput" placeholder="e.g. Wanjiru Kamau">
+        </div>
+        <div class="field">
+          <label for="numberInput">Member number</label>
+          <input type="text" id="numberInput" class="mono" placeholder="e.g. M-014">
+        </div>
+        <div class="field">
+          <label for="phoneInput">WhatsApp number <span style="font-weight:400; color:var(--ink-faint);">(optional)</span></label>
+          <input type="tel" id="phoneInput" placeholder="e.g. 2547XXXXXXXX">
+        </div>
+      </div>
+      <div class="field" style="margin-top:2px;">
+        <span class="hint">Payment status is set automatically to <strong>200</strong>, and a unique access code is generated on add.</span>
+      </div>
+      <button class="btn btn-primary" id="addMemberBtn" style="margin-top:10px;">Add member</button>
+      <div id="addError" class="error-text" style="display:none;"></div>
+    </div>
+
+    <div class="panel" style="padding-bottom:8px;">
+      <div class="top-bar-row">
+        <h3>Members</h3>
+      </div>
+      <div id="membersTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Member #</th>
+              <th>Payment</th>
+              <th>Access code</th>
+              <th>Status</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="membersBody"></tbody>
+        </table>
+        <div id="emptyState" class="empty" style="display:none;">No members yet. Add your first one above.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY PAGE -->
+  <div id="verifyView" class="verify-wrap" style="display:none;">
+    <h2>Check your membership</h2>
+    <p class="sub" style="color:var(--ink-soft); margin-top:4px;">Enter your member number and the access code you received by WhatsApp.</p>
+    <div class="panel" style="margin-top:18px;">
+      <div class="field">
+        <label for="vNumber">Member number</label>
+        <input type="text" id="vNumber" class="mono" placeholder="e.g. M-014">
+      </div>
+      <div class="field">
+        <label for="vCode">Access code</label>
+        <input type="text" id="vCode" class="mono" placeholder="e.g. 7QK3XR">
+      </div>
+      <button class="btn btn-primary" id="verifyBtn" style="width:100%; justify-content:center; margin-top:6px;">Check status</button>
+    </div>
+    <div id="verifyResult"></div>
+  </div>
+
+  <footer>Local testing build — all data is stored in this browser only.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var MEMBERS_KEY = "gatehouse_members";
+  var SETTINGS_KEY = "gatehouse_settings";
+  var SESSION_KEY = "gatehouse_admin_session";
+
+  var CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  var members = [];
+  var settings = { waLink: "", adminPassword: "admin123" };
+
+  function safeGet(key){
+    try{
+      var v = localStorage.getItem(key);
+      return v ? JSON.parse(v) : null;
+    }catch(e){ return null; }
+  }
+  function safeSet(key, val){
+    try{
+      localStorage.setItem(key, JSON.stringify(val));
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function loadData(){
+    var m = safeGet(MEMBERS_KEY);
+    var s = safeGet(SETTINGS_KEY);
+    members = Array.isArray(m) ? m : [];
+    if(s && typeof s === "object"){
+      settings.waLink = s.waLink || "";
+      settings.adminPassword = s.adminPassword || "admin123";
+    }
+  }
+  function saveMembers(){ safeSet(MEMBERS_KEY, members); }
+  function saveSettings(){ safeSet(SETTINGS_KEY, settings); }
+
+  function generateCode(){
+    var code;
+    do{
+      code = "";
+      for(var i=0;i<6;i++){
+        code += CODE_CHARS[Math.floor(Math.random()*CODE_CHARS.length)];
+      }
+    } while(members.some(function(m){ return m.code === code; }));
+    return code;
+  }
+  function uid(){ return "m_" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  // ---------- View switching ----------
+  var tabAdminBtn = document.getElementById("tabAdminBtn");
+  var tabVerifyBtn = document.getElementById("tabVerifyBtn");
+  var loginView = document.getElementById("loginView");
+  var dashboardView = document.getElementById("dashboardView");
+  var verifyView = document.getElementById("verifyView");
+
+  function showAdmin(){
+    tabAdminBtn.classList.add("active");
+    tabVerifyBtn.classList.remove("active");
+    verifyView.style.display = "none";
+    if(isLoggedIn()){
+      loginView.style.display = "none";
+      dashboardView.style.display = "block";
+      renderDashboard();
+    } else {
+      loginView.style.display = "block";
+      dashboardView.style.display = "none";
+    }
+  }
+  function showVerify(){
+    tabVerifyBtn.classList.add("active");
+    tabAdminBtn.classList.remove("active");
+    loginView.style.display = "none";
+    dashboardView.style.display = "none";
+    verifyView.style.display = "block";
+  }
+  tabAdminBtn.addEventListener("click", showAdmin);
+  tabVerifyBtn.addEventListener("click", showVerify);
+
+  // ---------- Auth ----------
+  function isLoggedIn(){
+    return safeGet(SESSION_KEY) === true;
+  }
+  document.getElementById("loginBtn").addEventListener("click", function(){
+    var pw = document.getElementById("pwInput").value;
+    var errEl = document.getElementById("loginError");
+    if(pw === settings.adminPassword){
+      safeSet(SESSION_KEY, true);
+      errEl.style.display = "none";
+      document.getElementById("pwInput").value = "";
+      showAdmin();
+    } else {
+      errEl.style.display = "block";
+    }
+  });
+  document.getElementById("pwInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ document.getElementById("loginBtn").click(); }
+  });
+  document.getElementById("logoutBtn").addEventListener("click", function(){
+    safeSet(SESSION_KEY, false);
+    showAdmin();
+  });
+
+  // ---------- Settings: WhatsApp link ----------
+  document.getElementById("saveWaLinkBtn").addEventListener("click", function(){
+    var val = document.getElementById("waLinkInput").value.trim();
+    settings.waLink = val;
+    saveSettings();
+    var fb = document.getElementById("waLinkSaved");
+    fb.style.display = "block";
+    setTimeout(function(){ fb.style.display = "none"; }, 2200);
+  });
+
+  document.getElementById("savePwBtn").addEventListener("click", function(){
+    var val = document.getElementById("newPwInput").value;
+    if(val.length < 4){
+      alertInline("pwSaved", "Password must be at least 4 characters.", true);
+      return;
+    }
+    settings.adminPassword = val;
+    saveSettings();
+    document.getElementById("newPwInput").value = "";
+    alertInline("pwSaved", "Password updated.", false);
+  });
+  function alertInline(id, text, isError){
+    var el = document.getElementById(id);
+    el.textContent = text;
+    el.style.color = isError ? "var(--red)" : "var(--accent)";
+    el.style.display = "block";
+    setTimeout(function(){ el.style.display = "none"; }, 2500);
+  }
+
+  // ---------- Add member ----------
+  document.getElementById("addMemberBtn").addEventListener("click", function(){
+    var name = document.getElementById("nameInput").value.trim();
+    var number = document.getElementById("numberInput").value.trim();
+    var phone = document.getElementById("phoneInput").value.trim();
+    var errEl = document.getElementById("addError");
+
+    if(!name || !number){
+      errEl.textContent = "Enter a name and a member number.";
+      errEl.style.display = "block";
+      return;
+    }
+    var dup = members.some(function(m){ return m.number.toLowerCase() === number.toLowerCase(); });
+    if(dup){
+      errEl.textContent = "That member number is already in use.";
+      errEl.style.display = "block";
+      return;
+    }
+    errEl.style.display = "none";
+
+    members.push({
+      id: uid(),
+      name: name,
+      number: number,
+      phone: phone,
+      code: generateCode(),
+      status: "pending",
+      payment: 200
+    });
+    saveMembers();
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("numberInput").value = "";
+    document.getElementById("phoneInput").value = "";
+    renderDashboard();
+  });
+
+  // ---------- Render dashboard ----------
+  function renderDashboard(){
+    document.getElementById("waLinkInput").value = settings.waLink;
+
+    document.getElementById("statTotal").textContent = members.length;
+    document.getElementById("statApproved").textContent = members.filter(function(m){ return m.status==="approved"; }).length;
+    document.getElementById("statPending").textContent = members.filter(function(m){ return m.status==="pending"; }).length;
+
+    var body = document.getElementById("membersBody");
+    var empty = document.getElementById("emptyState");
+    body.innerHTML = "";
+
+    if(members.length === 0){
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+
+    members.forEach(function(m){
+      var tr = document.createElement("tr");
+
+      var tdName = document.createElement("td");
+      tdName.setAttribute("data-label","Name");
+      tdName.innerHTML = '<span class="member-name"></span>';
+      tdName.querySelector(".member-name").textContent = m.name;
+      tr.appendChild(tdName);
+
+      var tdNum = document.createElement("td");
+      tdNum.setAttribute("data-label","Member #");
+      tdNum.innerHTML = '<span class="member-number"></span>';
+      tdNum.querySelector(".member-number").textContent = m.number;
+      tr.appendChild(tdNum);
+
+      var tdPay = document.createElement("td");
+      tdPay.setAttribute("data-label","Payment");
+      tdPay.textContent = m.payment;
+      tr.appendChild(tdPay);
+
+      var tdCode = document.createElement("td");
+      tdCode.setAttribute("data-label","Access code");
+      var codeSpan = document.createElement("span");
+      codeSpan.className = "member-code";
+      codeSpan.textContent = m.code;
+      var copyBtn = document.createElement("button");
+      copyBtn.className = "btn btn-ghost btn-sm";
+      copyBtn.textContent = "Copy";
+      copyBtn.addEventListener("click", function(){
+        copyText(m.code, copyBtn);
+      });
+      tdCode.appendChild(codeSpan);
+      tdCode.appendChild(copyBtn);
+      tr.appendChild(tdCode);
+
+      var tdStatus = document.createElement("td");
+      tdStatus.setAttribute("data-label","Status");
+      var badge = document.createElement("span");
+      badge.className = "badge " + (m.status === "approved" ? "badge-approved" : "badge-pending");
+      badge.innerHTML = '<span class="badge-dot"></span>' + (m.status === "approved" ? "Approved" : "Pending");
+      tdStatus.appendChild(badge);
+      tr.appendChild(tdStatus);
+
+      var tdActions = document.createElement("td");
+      tdActions.setAttribute("data-label","Actions");
+      tdActions.className = "actions-cell";
+
+      var toggleBtn = document.createElement("button");
+      toggleBtn.className = "btn btn-sm";
+      toggleBtn.textContent = m.status === "approved" ? "Set pending" : "Approve";
+      toggleBtn.addEventListener("click", function(){
+        m.status = m.status === "approved" ? "pending" : "approved";
+        saveMembers();
+        renderDashboard();
+      });
+      tdActions.appendChild(toggleBtn);
+
+      var message = "Hi " + m.name + ", your Gatehouse access code is " + m.code + ". Use it with your member number (" + m.number + ") on the verification page to confirm your status.";
+      if(m.phone){
+        var waBtn = document.createElement("a");
+        waBtn.className = "btn btn-sm";
+        waBtn.textContent = "Send via WhatsApp";
+        waBtn.target = "_blank";
+        waBtn.rel = "noopener noreferrer";
+        waBtn.href = "https://wa.me/" + m.phone.replace(/[^0-9]/g,"") + "?text=" + encodeURIComponent(message);
+        tdActions.appendChild(waBtn);
+      } else {
+        var copyMsgBtn = document.createElement("button");
+        copyMsgBtn.className = "btn btn-sm";
+        copyMsgBtn.textContent = "Copy message";
+        copyMsgBtn.addEventListener("click", function(){
+          copyText(message, copyMsgBtn);
+        });
+        tdActions.appendChild(copyMsgBtn);
+      }
+
+      var delBtn = document.createElement("button");
+      delBtn.className = "btn btn-sm btn-danger";
+      delBtn.textContent = "Delete";
+      var confirming = false;
+      var confirmTimer = null;
+      delBtn.addEventListener("click", function(){
+        if(!confirming){
+          confirming = true;
+          delBtn.textContent = "Confirm delete";
+          confirmTimer = setTimeout(function(){
+            confirming = false;
+            delBtn.textContent = "Delete";
+          }, 3000);
+        } else {
+          clearTimeout(confirmTimer);
+          members = members.filter(function(x){ return x.id !== m.id; });
+          saveMembers();
+          renderDashboard();
+        }
+      });
+      tdActions.appendChild(delBtn);
+
+      tr.appendChild(tdActions);
+      body.appendChild(tr);
+    });
+  }
+
+  function copyText(text, btn){
+    var original = btn.textContent;
+    function done(ok){
+      btn.textContent = ok ? "Copied" : "Copy failed";
+      setTimeout(function(){ btn.textContent = original; }, 1500);
+    }
+    try{
+      navigator.clipboard.writeText(text).then(function(){ done(true); }).catch(function(){ done(false); });
+    }catch(e){
+      done(false);
+    }
+  }
+
+  // ---------- Verify page ----------
+  document.getElementById("verifyBtn").addEventListener("click", function(){
+    loadData(); // refresh in case admin data changed
+    var number = document.getElementById("vNumber").value.trim();
+    var code = document.getElementById("vCode").value.trim();
+    var resultEl = document.getElementById("verifyResult");
+
+    if(!number || !code){
+      resultEl.innerHTML = '<div class="verify-result bad"><h3>Missing details</h3><p>Enter both your member number and access code.</p></div>';
+      return;
+    }
+
+    var match = members.find(function(m){
+      return m.number.toLowerCase() === number.toLowerCase() && m.code.toUpperCase() === code.toUpperCase();
+    });
+
+    if(!match){
+      resultEl.innerHTML = '<div class="verify-result bad"><h3>No match found</h3><p>Double check your member number and access code, then try again.</p></div>';
+      return;
+    }
+
+    if(match.status !== "approved"){
+      resultEl.innerHTML = '<div class="verify-result pending"><h3>Pending approval</h3><p>Hi ' + escapeHtml(match.name) + ', your details are on file but not yet approved. You\'ll be able to join once an admin approves your membership.</p></div>';
+      return;
+    }
+
+    if(!settings.waLink){
+      resultEl.innerHTML = '<div class="verify-result ok"><h3>You\'re approved, ' + escapeHtml(match.name) + '</h3><p>The WhatsApp group link hasn\'t been set up yet. Please check back shortly.</p></div>';
+      return;
+    }
+
+    resultEl.innerHTML = '<div class="verify-result ok"><h3>You\'re approved, ' + escapeHtml(match.name) + '</h3><p>Tap below to join the WhatsApp group.</p>' +
+      '<a class="wa-btn" href="' + escapeAttr(settings.waLink) + '" target="_blank" rel="noopener noreferrer">Join WhatsApp group</a></div>';
+  });
+
+  function escapeHtml(str){
+    var d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+  }
+  function escapeAttr(str){
+    return String(str).replace(/"/g, "&quot;");
+  }
+
+  // ---------- Init ----------
+  loadData();
+  showAdmin();
+})();
+</script>
+</body>
+</html>
